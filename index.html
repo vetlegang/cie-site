@@ -1,1 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creative Intelligence Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --accent: #00ff88;
+    --accent-dim: rgba(0,255,136,0.08);
+    --text: #f0f0f0;
+    --muted: #666;
+    --muted2: #444;
+  }
 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 2rem 4rem;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+    font-weight: 400;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin-top: 5rem;
+    border: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  .hero-stat {
+    padding: 1.5rem;
+    background: var(--surface);
+  }
+
+  .hero-stat:not(:last-child) { border-right: 1px solid var(--border); }
+
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* SECTIONS */
+  section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+    line-height: 1.1;
+  }
+
+  /* HOW IT WORKS */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    padding-top: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  .step h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .step p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* PRIVACY */
+  .policy-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .policy-block h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .policy-block p, .policy-block li {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 0.75rem;
+  }
+
+  .policy-block ul {
+    padding-left: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .policy-block li { margin-bottom: 0.4rem; }
+
+  /* DATA DELETION */
+  .deletion-box {
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 2.5rem;
+    margin-top: 2rem;
+  }
+
+  .deletion-box h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .deletion-box p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .deletion-box a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(0,255,136,0.3);
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+  }
+
+  .deletion-box a:hover { border-color: var(--accent); }
+
+  /* CONTACT */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    border: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .contact-item {
+    padding: 1.5rem 2rem;
+    background: var(--surface);
+  }
+
+  .contact-item:first-child { border-right: 1px solid var(--border); }
+
+  .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-val {
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .contact-val a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted2);
+    letter-spacing: 0.05em;
+  }
+
+  /* GRID BG */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-stat:not(:last-child) { border-right: none; border-bottom: 1px solid var(--border); }
+    .contact-grid { grid-template-columns: 1fr; }
+    .contact-item:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="logo">CIE — Creative Intelligence Engine</div>
+  <div class="nav-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#terms">Terms</a>
+    <a href="#data-deletion">Data deletion</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Ad Intelligence Platform</div>
+  <h1>Find winning<br>ads <span>before</span><br>your rivals do.</h1>
+  <p class="hero-desc">Creative Intelligence Engine scans the Meta Ad Library, scores competitor creatives, and generates ready-to-use scripts and briefs for performance marketers.</p>
+  <div class="hero-grid">
+    <div class="hero-stat">
+      <div class="stat-num">6K+</div>
+      <div class="stat-label">Ads scanned per run</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">11</div>
+      <div class="stat-label">Pipeline stages</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">DTC</div>
+      <div class="stat-label">Supplement focus</div>
+    </div>
+  </div>
+</div>
+
+<section id="how-it-works">
+  <div class="section-tag">Product</div>
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div>
+        <h3>Competitor scraping</h3>
+        <p>We query the public Meta Ad Library API for competitor brands in your niche. All data retrieved is publicly available ad transparency data — no private user data is accessed.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div>
+        <h3>Scoring & analysis</h3>
+        <p>Each ad is scored based on run duration, format, creative patterns, and engagement signals. Our pipeline identifies the top-performing creatives from high-spending brands.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div>
+        <h3>Brief generation</h3>
+        <p>Winning ads are transformed into creative briefs, scripts, and shot lists — ready for your creative team to act on immediately.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div>
+        <h3>Momentum monitoring</h3>
+        <p>Continuous scanning detects new high-spend creatives as they emerge, so your team always has the freshest competitive intelligence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="section-tag">Legal</div>
+  <h2>Privacy Policy</h2>
+  <p style="color: var(--muted); margin-bottom: 2rem; font-size: 0.9rem;">Last updated: April 2026</p>
+
+  <div class="policy-block">
+    <h3>What data we collect</h3>
+    <p>Creative Intelligence Engine collects only the minimum data necessary to provide the service:</p>
+    <ul>
+      <li>Account information (name, email address) when you create an account</li>
+      <li>Usage data (analysis runs, feature usage) to improve the product</li>
+      <li>Public ad data retrieved from the Meta Ad Library API on your behalf</li>
+    </ul>
+    <p>We do not collect, store, or process any personal data from Meta users or ad audiences. All Meta Ad Library data we retrieve is publicly available ad transparency data.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>How we use Meta API data</h3>
+    <p>We use the Meta Marketing API exclusively to retrieve publicly available ad creatives and metadata from the Meta Ad Library. Specifically:</p>
+    <ul>
+      <li>We query ad creatives, copy, and metadata for specified competitor brands</li>
+      <li>We use <strong>read-only</strong> access — we never create, modify, or delete ads</li>
+      <li>Retrieved data is used solely for competitive intelligence analysis within our platform</li>
+      <li>Data is cached for up to 72 hours to minimize API calls, then deleted</li>
+      <li>We do not share Meta API data with third parties</li>
+      <li>We do not use Meta API data for ad targeting or audience building</li>
+    </ul>
+  </div>
+
+  <div class="policy-block">
+    <h3>Data storage & security</h3>
+    <p>Your data is stored securely on servers within the EU. We use industry-standard encryption in transit (TLS) and at rest. Access to production data is restricted to authorised personnel only.</p>
+    <p>Analysis results and cached ad data are automatically purged after 72 hours. Account data is retained for the duration of your subscription and deleted within 30 days of account closure.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Third-party services</h3>
+    <p>We use the following third-party services to operate the platform:</p>
+    <ul>
+      <li>Meta Graph API — to retrieve public Ad Library data</li>
+      <li>Anthropic Claude API — to generate creative briefs and analysis</li>
+      <li>ElevenLabs — to generate voiceover scripts</li>
+      <li>OpenAI Whisper — for audio transcription of ad creatives</li>
+    </ul>
+    <p>Each service has its own privacy policy. We share only the minimum data necessary for each service to function.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Your rights</h3>
+    <p>You have the right to access, correct, export, or delete your personal data at any time. To exercise these rights, contact us at the address below. We will respond within 30 days.</p>
+  </div>
+</section>
+
+<section id="terms">
+  <div class="section-tag">Legal</div>
+  <h2>Terms of Service</h2>
+  <p style="color: var(--muted); margin-bottom: 2rem; font-size: 0.9rem;">Last updated: April 2026</p>
+
+  <div class="policy-block">
+    <h3>Acceptance of terms</h3>
+    <p>By accessing or using Creative Intelligence Engine ("CIE", "the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service. The Service is operated by Gangeskar Design ENK, Norway.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Description of service</h3>
+    <p>CIE is a SaaS platform that retrieves publicly available ad data from the Meta Ad Library, analyses competitor creatives, and generates marketing briefs and scripts for performance marketers. The Service uses read-only access to public Meta Ad Library data and does not interact with private user data or ad accounts.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Permitted use</h3>
+    <p>You may use the Service solely for lawful business purposes. You agree not to:</p>
+    <ul>
+      <li>Use the Service to violate Meta's Platform Terms or Ad Library policies</li>
+      <li>Attempt to reverse-engineer, scrape, or resell the platform or its outputs</li>
+      <li>Use generated briefs or scripts to create misleading or deceptive advertising</li>
+      <li>Share account credentials or provide unauthorised third-party access</li>
+    </ul>
+  </div>
+
+  <div class="policy-block">
+    <h3>Meta platform compliance</h3>
+    <p>CIE accesses the Meta Ad Library API in accordance with Meta's Platform Terms. All data retrieved is publicly available ad transparency data. You are responsible for ensuring your use of CIE outputs complies with applicable advertising regulations and Meta's advertising policies.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Intellectual property</h3>
+    <p>The CIE platform, including its design, code, and methodology, is owned by Gangeskar Design ENK. Generated briefs and scripts produced for your account are yours to use commercially. Public ad data retrieved from Meta remains subject to Meta's own terms.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Limitation of liability</h3>
+    <p>The Service is provided "as is". We do not guarantee uninterrupted access or the accuracy of competitive intelligence outputs. To the maximum extent permitted by Norwegian law, Gangeskar Design ENK is not liable for indirect, incidental, or consequential damages arising from use of the Service.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Termination</h3>
+    <p>We reserve the right to suspend or terminate accounts that violate these Terms. You may cancel your subscription at any time. Upon termination, your data will be deleted within 30 days.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Governing law</h3>
+    <p>These Terms are governed by the laws of Norway. Any disputes shall be resolved in Norwegian courts.</p>
+  </div>
+
+  <div class="policy-block">
+    <h3>Contact</h3>
+    <p>Questions about these Terms? Contact us at <a href="mailto:privacy@creativeinteligenceengine.com" style="color: var(--accent); text-decoration: none;">privacy@creativeinteligenceengine.com</a></p>
+  </div>
+</section>
+
+<section id="data-deletion">
+  <div class="section-tag">Data deletion</div>
+  <h2>Delete your data</h2>
+  <p style="color: var(--muted); margin-bottom: 0; font-size: 0.95rem; max-width: 560px;">If you have connected your Facebook account to Creative Intelligence Engine and wish to delete your data, you can request deletion at any time.</p>
+
+  <div class="deletion-box">
+    <h3>How to request data deletion</h3>
+    <p>Send an email to <a href="mailto:privacy@creativeinteligenceengine.com">privacy@creativeinteligenceengine.com</a> with the subject line <strong>"Data Deletion Request"</strong> and include:</p>
+    <ul style="color: var(--muted); font-size: 0.9rem; padding-left: 1.25rem; line-height: 1.8; margin-bottom: 1rem;">
+      <li>Your full name and email address associated with your account</li>
+      <li>Your Facebook User ID (if known)</li>
+    </ul>
+    <p>We will confirm deletion within <strong>30 days</strong>. All personal data, cached ad data, and analysis results associated with your account will be permanently deleted.</p>
+    <p>Note: We only store your account email and usage logs. We do not store Facebook profile data, friends lists, or any other personal Facebook information beyond what is required to authenticate your session.</p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-tag">Get in touch</div>
+  <h2>Contact</h2>
+  <div class="contact-grid">
+    <div class="contact-item">
+      <div class="contact-label">Email</div>
+      <div class="contact-val"><a href="mailto:privacy@creativeinteligenceengine.com">privacy@creativeinteligenceengine.com</a></div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-label">Company</div>
+      <div class="contact-val">Gangeskar Design ENK — Norway</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Creative Intelligence Engine — Gangeskar Design ENK</p>
+  <p>Norway · org.nr 931 54...</p>
+</footer>
+
+</body>
+</html>
